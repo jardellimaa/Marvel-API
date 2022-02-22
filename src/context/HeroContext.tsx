@@ -6,27 +6,46 @@ const HeroContext = createContext<IHeroContext>({} as IHeroContext);
 
 export const HeroProvider = (props: any) => {
   const [heros, setHeros] = useState<IHero[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     reloadHeros();
   }, []);
 
-  const reloadHeros = (name = "") => {
-    getHeros(name)
+  const reloadHeros = (name = "", clear = false) => {
+    if (loading) return;
+
+    if (!clear) if (total > 0 && heros.length === total) return;
+    if (clear) setHeros([]);
+
+    setLoading(true);
+
+    getHeros(name, clear ? 0 : offset)
       .then((response: any) => {
-        setHeros(response.data.data.results);
+        if (clear) {
+          setHeros([...response.data.data.results]);
+          setOffset(20);
+        } else {
+          setHeros([...heros, ...response.data.data.results]);
+          setOffset(offset + 20);
+        }
+        setTotal(response.data.data.total);
+        setLoading(false);
       })
       .catch((err: any) => {
         console.error("Ops! ocorreu um erro" + err);
+        setLoading(false);
       });
   };
 
-  //console.log(heros, 'heros');
   return (
     <HeroContext.Provider
       value={{
         heros,
         reloadHeros,
+        loading,
       }}
     >
       {props.children}
@@ -34,16 +53,18 @@ export const HeroProvider = (props: any) => {
   );
 };
 
-export const getHeros = (name = "") => {
+export const getHeros = (name = "", offset = 0) => {
   let params = {};
 
   if (name) {
     params = {
-      name: name,
+      nameStartsWith: name,
+      offset,
       ...AUTHENTICATION,
     };
   } else {
     params = {
+      offset,
       ...AUTHENTICATION,
     };
   }

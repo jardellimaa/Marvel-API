@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { SafeAreaView } from "react-native";
+import React, { useState, useContext, useRef } from "react";
+import { SafeAreaView, RefreshControl } from "react-native";
 import HeroContext from "../../context/HeroContext";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -16,12 +16,12 @@ import {
   SearchInputContainer,
   SearchFlatList,
 } from "./Search.styles";
-import { IHero } from "../../interfaces/interfaces";
 
 const imageCover = require("../../../assets/images/popartecover.jpg");
 
 export default function HeroScreen({ navigation }: any) {
-  const { heros, reloadHeros } = useContext(HeroContext);
+  const { heros, reloadHeros, loading } = useContext(HeroContext);
+  const listRef: any = useRef(null);
 
   const [search, setSearch] = useState<string>("");
 
@@ -31,39 +31,31 @@ export default function HeroScreen({ navigation }: any) {
   };
 
   function cardHeroItem({ item: hero }: any) {
-    if (heros.length === 1) {
-      return (
-        <ButtonHeroOne
-          key={hero?.id}
-          onPress={() => navigation.navigate("HeroDetail", { hero })}
-        >
-          <ImageHeroCoverOne
-            source={{
-              uri: getURI(hero.thumbnail.path, hero.thumbnail.extension),
-            }}
-          />
-          <HeroTextContent>
-            <HeroName>Hero: {hero?.name}</HeroName>
-          </HeroTextContent>
-        </ButtonHeroOne>
-      );
-    } else {
-      return (
-        <ButtonHero
-          key={hero?.id}
-          onPress={() => navigation.navigate("HeroDetail", { hero })}
-        >
-          <ImageHeroCover
-            source={{
-              uri: getURI(hero.thumbnail.path, hero.thumbnail.extension),
-            }}
-          />
-          <HeroTextContent>
-            <HeroName>Hero: {hero?.name}</HeroName>
-          </HeroTextContent>
-        </ButtonHero>
-      );
-    }
+    return heros.length === 1 ? (
+      <ButtonHeroOne
+        onPress={() => navigation.navigate("HeroDetail", { hero })}
+      >
+        <ImageHeroCoverOne
+          source={{
+            uri: getURI(hero?.thumbnail?.path, hero?.thumbnail?.extension),
+          }}
+        />
+        <HeroTextContent>
+          <HeroName>{hero?.name}</HeroName>
+        </HeroTextContent>
+      </ButtonHeroOne>
+    ) : (
+      <ButtonHero onPress={() => navigation.navigate("HeroDetail", { hero })}>
+        <ImageHeroCover
+          source={{
+            uri: getURI(hero?.thumbnail?.path, hero?.thumbnail?.extension),
+          }}
+        />
+        <HeroTextContent>
+          <HeroName>{hero?.name}</HeroName>
+        </HeroTextContent>
+      </ButtonHero>
+    );
   }
 
   return (
@@ -76,14 +68,14 @@ export default function HeroScreen({ navigation }: any) {
               setSearch(e.toLowerCase());
             }}
             onEndEditing={() => {
-              reloadHeros(search);
+              reloadHeros(search, true);
             }}
             value={search}
             placeholder="Search Here"
           />
           <ButtonHeroSearch
             onPress={() => {
-              reloadHeros(search);
+              reloadHeros(search, true);
             }}
           >
             <Ionicons name="search" size={16} color="black" />
@@ -93,11 +85,16 @@ export default function HeroScreen({ navigation }: any) {
           style={styles.shadow}
           data={heros}
           numColumns={2}
-          keyExtractor={(hero: IHero, index: number) =>
-            String(hero.id).concat(String(index))
-          }
-          showsVerticalScrollIndicator={false}
+          onEndReached={() => reloadHeros(search)}
+          onEndReachedThreshold={1}
+          keyExtractor={(item: any, index: number) => `${item.id}-${index}`}
+          showsVerticalScrollIndicator={true}
           renderItem={cardHeroItem}
+          ref={listRef}
+          refreshing={loading}
+          refreshControl={
+            <RefreshControl refreshing={loading} colors={["red"]} />
+          }
         />
       </SearchContainer>
     </SafeAreaView>

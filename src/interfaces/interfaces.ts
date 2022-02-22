@@ -25,4 +25,5 @@ export interface IHero {
 export interface IHeroContext {
   heros: IHero[];
   reloadHeros: Function;
+  loading: boolean;
 }

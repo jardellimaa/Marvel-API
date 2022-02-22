@@ -1,5 +1,5 @@
-import styled from 'styled-components/native';
-import { StyleSheet } from 'react-native';
+import styled from "styled-components/native";
+import { StyleSheet } from "react-native";
 
 export const SearchContainer = styled.ImageBackground`
   background-color: #341948;
@@ -90,7 +90,7 @@ export const SearchFlatList = styled.FlatList`
 
 export const styles = StyleSheet.create({
   shadow: {
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,

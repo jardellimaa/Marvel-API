@@ -45,9 +45,7 @@ export default function HeroDetail({ route }: any) {
     }
   };
 
-  //console.log(heroChosen);
-
-  function HeroComics({ item: comic }: any) {
+  function cardHeroComics({ item: comic }: any) {
     return (
       <ComicsCards>
         <ComicCover
@@ -56,11 +54,11 @@ export default function HeroDetail({ route }: any) {
           }}
         />
         <ComicsInfos>
-          <ComicsInfoText>Title: {comic?.title}</ComicsInfoText>
-          <ComicsInfoText>Number: {comic?.issueNumber}</ComicsInfoText>
-          {comic?.prices?.map((priceItem: IPrices) => (
-            <ComicsInfoText>
-              {getPriceName(priceItem?.type)}: ${priceItem?.price}
+          <ComicsInfoText>Title: {comic.title}</ComicsInfoText>
+          <ComicsInfoText>Number: {comic.issueNumber}</ComicsInfoText>
+          {comic?.prices?.map((priceItem: IPrices, index: number) => (
+            <ComicsInfoText key={index}>
+              {getPriceName(priceItem.type)}: ${priceItem.price}
             </ComicsInfoText>
           ))}
         </ComicsInfos>
@@ -80,17 +78,15 @@ export default function HeroDetail({ route }: any) {
           }}
         >
           <CardInfo style={styles.shadow}>
-            <HeroInfo>Hero: {heroChosen?.name}</HeroInfo>
+            <HeroInfo>{heroChosen.name}</HeroInfo>
           </CardInfo>
           <FlatList
             data={heroComics}
             style={styles.shadow}
             numColumns={1}
-            keyExtractor={(heroComic: IHeroComic, index: number) =>
-              String(heroComic.id).concat(String(index))
-            }
-            showsVerticalScrollIndicator={false}
-            renderItem={HeroComics}
+            keyExtractor={(item, index) => `${item.id}-${index}`}
+            showsVerticalScrollIndicator={true}
+            renderItem={cardHeroComics}
           />
         </ComicConteiner>
       </SafeAreaView>
