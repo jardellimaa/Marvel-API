@@ -1,6 +1,6 @@
 const HomeStrings = {
   marvel: 'MARVEL',
-  welcome: 'Welcome Oowlish!',
+  welcome: 'Welcome',
   heros: "Choose Your Hero's App",
   btnHeros: 'Click here to choose your Hero',
   textInfo:
