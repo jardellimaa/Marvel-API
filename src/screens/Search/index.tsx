@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef } from "react";
-import { SafeAreaView, RefreshControl } from "react-native";
+import { SafeAreaView, RefreshControl, Keyboard } from "react-native";
 import HeroContext from "../../context/HeroContext";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -65,7 +65,7 @@ export default function HeroScreen({ navigation }: any) {
           <SearchInput
             placeholderTextColor="#fff"
             onChangeText={(e: string) => {
-              setSearch(e.toLowerCase());
+              setSearch(e);
             }}
             onEndEditing={() => {
               reloadHeros(search, true);
@@ -76,6 +76,7 @@ export default function HeroScreen({ navigation }: any) {
           <ButtonHeroSearch
             onPress={() => {
               reloadHeros(search, true);
+              Keyboard.dismiss();
             }}
           >
             <Ionicons name="search" size={16} color="black" />

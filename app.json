@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "app-marvel",
-    "slug": "app-marvel",
+    "name": "Marvel App",
+    "slug": "marvel-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/marvelapp.png",
-    "scheme": "myapp",
+    "scheme": "marvel-app",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -15,15 +15,18 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/marvelapp.png",
+        "foregroundImage": "./assets/images/marvelApp.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.jardel.marvelApp"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
