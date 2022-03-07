@@ -1,5 +1,7 @@
-import { StyleSheet } from 'react-native';
-import styled from 'styled-components/native';
+import { StyleSheet, Dimensions, FlatList } from "react-native";
+import styled from "styled-components/native";
+
+const windowHeight = Dimensions.get("window").height;
 
 export const ComicConteiner = styled.ImageBackground`
   height: 100%;
@@ -10,7 +12,7 @@ export const ComicConteiner = styled.ImageBackground`
 export const ComicsCards = styled.View`
   background-color: rgba(52, 25, 72, 0.9);
   border-radius: 10px;
-  margin-top: 20px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -59,9 +61,28 @@ export const HeroInfo = styled.Text`
   padding: 10px;
 `;
 
+export const EmptyContainer = styled.View`
+  width: 100%;
+  height: ${windowHeight * 0.62}px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const EmptyName = styled.Text`
+  font-size: 22px;
+  text-align: center;
+  color: #fff;
+  font-weight: 700;
+`;
+
+export const DetailFlatList = styled.FlatList`
+  margin-top: 20px;
+`;
+
 export const styles = StyleSheet.create({
   shadow: {
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,

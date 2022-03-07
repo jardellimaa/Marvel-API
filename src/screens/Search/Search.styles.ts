@@ -1,5 +1,7 @@
 import styled from "styled-components/native";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+
+const windowHeight = Dimensions.get("window").height;
 
 export const SearchContainer = styled.ImageBackground`
   background-color: #341948;
@@ -77,11 +79,25 @@ export const SearchInput = styled.TextInput`
 
 export const SearchInputContainer = styled.View`
   width: 100%;
-  display: flex;
   flex-direction: row;
   align-items: center;
   margin-top: 10px;
   margin-bottom: 20px;
+`;
+
+export const EmptyContainer = styled.View`
+  width: 100%;
+  height: ${windowHeight * 0.62}px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const EmptyName = styled.Text`
+  font-size: 22px;
+  text-align: center;
+  color: #fff;
+  font-weight: 700;
 `;
 
 export const SearchFlatList = styled.FlatList`

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, FlatList } from "react-native";
+import { SafeAreaView, FlatList, RefreshControl } from "react-native";
 import { api, AUTHENTICATION } from "../../services/api";
 import {
+  DetailFlatList,
   ComicsCards,
   CardInfo,
   HeroInfo,
@@ -10,25 +11,51 @@ import {
   ComicsInfoText,
   ComicConteiner,
   styles,
+  EmptyContainer,
+  EmptyName,
 } from "./HeroDatail.styles";
 import { IHeroComic, IPrices } from "../../interfaces/interfaces";
 
 export default function HeroDetail({ route }: any) {
   const heroChosen = route.params.hero;
   const [heroComics, setHeroComics] = useState<IHeroComic[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     reloadComics(heroChosen.id);
   }, [heroChosen]);
 
-  const reloadComics = (id: number) => {
+  const reloadComics = (id: number, reload = false) => {
+    if (loading) return;
+
+    if (!reload) if (total > 0 && heroComics.length === total) return;
+    if (reload) setHeroComics([]);
+
+    setLoading(true);
+
+    const params = {
+      offset: reload ? 0 : offset,
+      ...AUTHENTICATION,
+    };
+
     api
-      .get(`/v1/public/characters/${id}/comics`, { params: AUTHENTICATION })
+      .get(`/v1/public/characters/${id}/comics`, { params })
       .then((response: any) => {
-        setHeroComics([...response.data.data.results]);
+        if (reload) {
+          setHeroComics([...response.data.data.results]);
+          setOffset(20);
+        } else {
+          setHeroComics([...heroComics, ...response.data.data.results]);
+          setOffset(offset + 20);
+        }
+        setTotal(response.data.data.total);
+        setLoading(false);
       })
       .catch((err: any) => {
         console.error("ops! ocorreu um erro" + err);
+        setLoading(false);
       });
   };
 
@@ -66,6 +93,15 @@ export default function HeroDetail({ route }: any) {
     );
   }
 
+  const listEmpty = () => {
+    return (
+      <EmptyContainer>
+        <EmptyName>Nenhum item</EmptyName>
+        <EmptyName>encontrado</EmptyName>
+      </EmptyContainer>
+    );
+  };
+
   return (
     <>
       <SafeAreaView>
@@ -80,13 +116,25 @@ export default function HeroDetail({ route }: any) {
           <CardInfo style={styles.shadow}>
             <HeroInfo>{heroChosen.name}</HeroInfo>
           </CardInfo>
-          <FlatList
+          <DetailFlatList
             data={heroComics}
             style={styles.shadow}
             numColumns={1}
-            keyExtractor={(item, index) => `${item.id}-${index}`}
+            onEndReached={() => reloadComics(heroChosen.id)}
+            onEndReachedThreshold={1}
+            keyExtractor={(item: any, index: number) => `${item.id}-${index}`}
             showsVerticalScrollIndicator={true}
             renderItem={cardHeroComics}
+            refreshing={loading}
+            ListEmptyComponent={!loading ? listEmpty : null}
+            onRefresh={() => reloadComics(heroChosen.id, true)}
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                colors={["#341948"]}
+                onRefresh={() => reloadComics(heroChosen.id, true)}
+              />
+            }
           />
         </ComicConteiner>
       </SafeAreaView>

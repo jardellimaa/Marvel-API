@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext } from "react";
 import { SafeAreaView, RefreshControl, Keyboard } from "react-native";
 import HeroContext from "../../context/HeroContext";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,13 +15,14 @@ import {
   SearchInput,
   SearchInputContainer,
   SearchFlatList,
+  EmptyContainer,
+  EmptyName,
 } from "./Search.styles";
 
 const imageCover = require("../../../assets/images/popartecover.jpg");
 
 export default function HeroScreen({ navigation }: any) {
   const { heros, reloadHeros, loading } = useContext(HeroContext);
-  const listRef: any = useRef(null);
 
   const [search, setSearch] = useState<string>("");
 
@@ -30,8 +31,8 @@ export default function HeroScreen({ navigation }: any) {
     return uri.replace("http", "https");
   };
 
-  function cardHeroItem({ item: hero }: any) {
-    return heros.length === 1 ? (
+  const cardHeroItem = ({ item: hero, index }: any) => {
+    return heros.length % 2 === 1 && index === heros.length - 1 ? (
       <ButtonHeroOne
         onPress={() => navigation.navigate("HeroDetail", { hero })}
       >
@@ -56,7 +57,16 @@ export default function HeroScreen({ navigation }: any) {
         </HeroTextContent>
       </ButtonHero>
     );
-  }
+  };
+
+  const listEmpty = () => {
+    return (
+      <EmptyContainer>
+        <EmptyName>Nenhum item</EmptyName>
+        <EmptyName>encontrado</EmptyName>
+      </EmptyContainer>
+    );
+  };
 
   return (
     <SafeAreaView>
@@ -91,10 +101,15 @@ export default function HeroScreen({ navigation }: any) {
           keyExtractor={(item: any, index: number) => `${item.id}-${index}`}
           showsVerticalScrollIndicator={true}
           renderItem={cardHeroItem}
-          ref={listRef}
           refreshing={loading}
+          onRefresh={() => reloadHeros(search, true)}
+          ListEmptyComponent={!loading ? listEmpty : null}
           refreshControl={
-            <RefreshControl refreshing={loading} colors={["red"]} />
+            <RefreshControl
+              refreshing={loading}
+              colors={["red"]}
+              onRefresh={() => reloadHeros(search, true)}
+            />
           }
         />
       </SearchContainer>
