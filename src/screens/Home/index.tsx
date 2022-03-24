@@ -19,7 +19,7 @@ export default function HomeScreen({ navigation }: any) {
         <HomeText>{HomeStrings.heros}</HomeText>
         <HomeInfo>{HomeStrings.textInfo}</HomeInfo>
       </CardWelcome>
-      <ButtonHome onPress={() => navigation.navigate('Hero')}>
+      <ButtonHome onPress={() => navigation.navigate('Heroes')}>
         <HomeInfoBottom>{HomeStrings.btnHeros}</HomeInfoBottom>
       </ButtonHome>
     </ImageCoverHome>
