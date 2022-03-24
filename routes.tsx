@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
+import { ThemeContext } from "styled-components";
 
 import HomeScreen from "./src/screens/Home";
 import Hero from "./src/screens/Search";
@@ -12,6 +13,8 @@ const AppStack = createStackNavigator();
 const TabStack = createBottomTabNavigator();
 
 function HeroesStack() {
+  const themeContext = useContext(ThemeContext);
+
   const config: any = {
     animation: "spring",
     config: {
@@ -25,7 +28,13 @@ function HeroesStack() {
   };
 
   return (
-    <AppStack.Navigator>
+    <AppStack.Navigator
+      initialRouteName={"HeroHome"}
+      screenOptions={{
+        headerTintColor: themeContext.activeTintColor,
+        headerStyle: { backgroundColor: themeContext.background },
+      }}
+    >
       <AppStack.Screen
         name="HeroHome"
         component={Hero}
@@ -34,6 +43,10 @@ function HeroesStack() {
             open: config,
             close: config,
           },
+          cardStyle: {
+            backgroundColor: "black",
+          },
+          headerTitle: "Heroes",
         }}
       />
       <AppStack.Screen
@@ -44,6 +57,10 @@ function HeroesStack() {
             open: config,
             close: config,
           },
+          cardStyle: {
+            backgroundColor: "black",
+          },
+          headerTitle: "Hero Detail",
         }}
       />
     </AppStack.Navigator>
@@ -51,6 +68,8 @@ function HeroesStack() {
 }
 
 export default function Routes() {
+  const themeContext = useContext(ThemeContext);
+
   return (
     <NavigationContainer>
       <TabStack.Navigator
@@ -62,19 +81,25 @@ export default function Routes() {
               iconName = focused ? "home" : "home-outline";
             } else {
               iconName = focused ? "reader" : "reader-outline";
-            } 
+            }
 
             // You can return any component that you like here!
             return <Ionicons name={iconName} size={size} color={color} />;
           },
         })}
         tabBarOptions={{
-          activeTintColor: "rgba(52, 25, 72, 1)",
+          activeTintColor: themeContext.activeTintColor,
           inactiveTintColor: "gray",
+          style: {
+            backgroundColor: themeContext.background,
+            borderTopColor: themeContext.background,
+            paddingBottom: 3,
+            paddingTop: 3,
+          },
         }}
       >
         <TabStack.Screen name="Home" component={HomeScreen} />
-        <TabStack.Screen name="Hero" component={HeroesStack} />
+        <TabStack.Screen name="Heroes" component={HeroesStack} />
       </TabStack.Navigator>
     </NavigationContainer>
   );
